@@ -1,0 +1,57 @@
+{
+  "name": "argus-platform",
+  "version": "1.0.0",
+  "description": "AI-Powered Cybersecurity & Risk Management Platform",
+  "main": "server.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch server.ts"
+  },
+  "keywords": [
+    "cybersecurity",
+    "risk-management",
+    "saas",
+    "enterprise"
+  ],
+  "author": "Argus Platform",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.2",
+    "bullmq": "^5.70.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.1",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.19.0",
+    "pg-hstore": "^2.3.4",
+    "qrcode": "^1.5.4",
+    "redis": "^5.11.0",
+    "sequelize": "^6.37.7",
+    "socket.io": "^4.8.3",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.4.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/pdfkit": "^0.17.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/speakeasy": "^2.0.10",
+    "sequelize-cli": "^6.6.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
