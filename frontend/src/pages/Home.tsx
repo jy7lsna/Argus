@@ -416,17 +416,17 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 1, ease: [0.25, 0.4, 0.25, 1] }}
                         className="w-full max-w-2xl px-4 mx-auto mt-5"
                     >
-                        <div className="glass p-2 rounded-2xl group focus-within:border-primary/20 transition-all duration-500 shadow-2xl">
-                            <div className="flex flex-col md:flex-row gap-2">
-                                <div className="flex-grow relative flex items-center px-5">
-                                    <Globe size={18} className="text-white/20 absolute left-5" />
+                        <div className="glass p-1.5 rounded-2xl group focus-within:border-primary/20 transition-all duration-500 shadow-2xl relative overflow-hidden">
+                            <div className="flex items-center gap-1">
+                                <div className="flex-grow relative flex items-center">
+                                    <Globe size={18} className="text-white/20 ml-6 absolute left-0" />
                                     <input
                                         type="text"
                                         placeholder="Enter your enterprise domain (e.g. google.com)"
-                                        className="w-full bg-transparent border-none focus:outline-none py-3.5 pl-10 text-white placeholder:text-white/20 font-medium text-sm"
+                                        className="w-full bg-transparent border-none focus:outline-none py-4 pl-14 text-white placeholder:text-white/20 font-medium text-sm"
                                     />
                                 </div>
-                                <button className="btn-primary py-3.5 px-8 rounded-xl text-sm flex items-center justify-center gap-2">
+                                <button className="btn-primary py-3.5 px-8 rounded-xl text-sm flex items-center justify-center gap-2 whitespace-nowrap mr-1">
                                     Analyze Domain
                                     <ArrowRight size={16} />
                                 </button>
