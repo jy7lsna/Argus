@@ -61,11 +61,9 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('Connected to PostgreSQL successfully.');
 
-    // In production, use migrations. sync() is for development only.
-    if (process.env.NODE_ENV !== 'production') {
-      await sequelize.sync();
-      console.log('Models synchronized with database (dev mode).');
-    }
+    // Auto-sync database schema on every startup (required for Render to add new columns)
+    await sequelize.sync({ alter: true });
+    console.log('Models synchronized with database.');
 
     // Start background services
     MonitoringService.start();
