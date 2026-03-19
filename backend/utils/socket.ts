@@ -6,7 +6,11 @@ let io: SocketIOServer;
 export const init = (httpServer: HttpServer) => {
     io = new SocketIOServer(httpServer, {
             cors: {
-                origin: 'http://localhost:5173',
+                origin: [
+                    'http://localhost:5173',
+                    'http://localhost:8080',
+                    process.env.FRONTEND_URL || ''
+                ].filter(Boolean),
                 methods: ['GET', 'POST'],
                 credentials: true
             }

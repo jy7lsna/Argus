@@ -8,9 +8,8 @@ const MonitoringService = {
   start: () => {
     console.log('Continuous Monitoring Service Started (Layered Architecture).');
 
-    // Default: Run every day at midnight ('0 0 * * *')
-    // Currently set to 5 minutes for demonstration as per previous request
-    cron.schedule('*/5 * * * *', async () => {
+    // Run every day at midnight
+    cron.schedule('0 0 * * *', async () => {
       console.log('Running background scans execution...');
 
       try {

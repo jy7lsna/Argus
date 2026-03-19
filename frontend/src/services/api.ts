@@ -8,6 +8,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+    // SECURITY NOTE: localStorage is vulnerable to XSS attacks. If an XSS 
+    // vulnerability exists, attackers can steal this token. Consider migrating
+    // to httpOnly cookies with SameSite=Strict for enhanced security.
     const token = localStorage.getItem('authToken');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

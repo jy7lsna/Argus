@@ -5,6 +5,16 @@ import HeaderService from './headerService';
 
 const ScannerService = {
     analyzeDomain: async (domain: string) => {
+        // --- Domain Input Validation (SSRF Prevention) ---
+        const domainRegex = /^(?!-)([a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,}$/;
+        if (!domainRegex.test(domain)) {
+            throw new Error('Invalid domain format');
+        }
+        const blocked = ['localhost', '127.0.0.1', '0.0.0.0', '::1', 'internal', 'local', '10.', '192.168.', '172.16.'];
+        if (blocked.some(b => domain.toLowerCase().includes(b))) {
+            throw new Error('Scanning internal/private domains is not allowed');
+        }
+
         const assets: any[] = [];
         let hasSPF = false;
         let hasIPv6 = false;

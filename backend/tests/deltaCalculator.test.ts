@@ -1,4 +1,4 @@
-const DeltaCalculator = require('../utils/deltaCalculator');
+import DeltaCalculator from '../utils/deltaCalculator';
 
 function testDeltaCalculator() {
   console.log('--- Testing DeltaCalculator ---');

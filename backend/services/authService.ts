@@ -5,7 +5,11 @@ import qrcode from 'qrcode';
 import crypto from 'crypto';
 import { User, Organization, ApiKey } from '../models';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'argus-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET environment variable is not set.');
+    process.exit(1);
+}
 
 const AuthService = {
     /**
@@ -16,6 +20,14 @@ const AuthService = {
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             throw new Error('User already exists');
+        }
+
+        // Password complexity enforcement (#23 fix)
+        if (!password || password.length < 8) {
+            throw new Error('Password must be at least 8 characters long');
+        }
+        if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+            throw new Error('Password must contain uppercase, lowercase, and a digit');
         }
 
         // Get or create organization
@@ -137,8 +149,8 @@ const AuthService = {
             name: `Argus Platform (${user.email})`
         });
 
-        // Save secret to user
-        await user.update({ two_factor_secret: secret.base32 });
+        // Store in pending field — only persisted to active on successful verification
+        await user.update({ two_factor_pending_secret: secret.base32 });
 
         // Generate QR code
         const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url || '');
@@ -156,14 +168,23 @@ const AuthService = {
         const user = await User.findByPk(userId);
         if (!user) throw new Error('User not found');
 
+        // Verify against the pending secret, not the active one
+        const pendingSecret = user.two_factor_pending_secret;
+        if (!pendingSecret) throw new Error('No pending 2FA setup found. Please generate a new QR code.');
+
         const verified = speakeasy.totp.verify({
-            secret: user.two_factor_secret,
+            secret: pendingSecret,
             encoding: 'base32',
             token
         });
 
         if (verified) {
-            await user.update({ is_two_factor_enabled: true });
+            // Move pending secret to active and enable 2FA
+            await user.update({
+                two_factor_secret: pendingSecret,
+                two_factor_pending_secret: null,
+                is_two_factor_enabled: true
+            });
             return { success: true, message: '2FA enabled successfully' };
         } else {
             throw new Error('Invalid token');

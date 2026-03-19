@@ -2,7 +2,11 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { ApiKey, User } from '../models';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'argus-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET environment variable is not set.');
+    process.exit(1);
+}
 
 const authMiddleware = async (req: any, res: any, next: any) => {
     try {
@@ -18,6 +22,11 @@ const authMiddleware = async (req: any, res: any, next: any) => {
             const apiKeyRecord = await ApiKey.findByPk(keyId);
             if (!apiKeyRecord) {
                 return res.status(401).json({ error: 'Invalid API Key' });
+            }
+
+            // Check if API key has expired (#10 fix)
+            if (apiKeyRecord.expires_at && new Date(apiKeyRecord.expires_at) < new Date()) {
+                return res.status(401).json({ error: 'API Key has expired' });
             }
 
             const isValid = await bcrypt.compare(keySecret, apiKeyRecord.key_hash);
@@ -46,11 +55,18 @@ const authMiddleware = async (req: any, res: any, next: any) => {
             return res.status(401).json({ error: 'Access token or API key required' });
         }
 
-        jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+        jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
             if (err) {
                 return res.status(403).json({ error: 'Invalid or expired token' });
             }
-            req.user = user;
+
+            // Validate JWT payload structure (#11 fix)
+            // Reject temp 2FA tokens (which only have `temp_id`, not `id`)
+            if (!decoded || !decoded.id || !decoded.email) {
+                return res.status(403).json({ error: 'Invalid token payload' });
+            }
+
+            req.user = { id: decoded.id, email: decoded.email };
             next();
         });
     } catch (error) {
@@ -60,3 +76,4 @@ const authMiddleware = async (req: any, res: any, next: any) => {
 };
 
 export default authMiddleware;
+

@@ -36,9 +36,18 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate Limiting for Analysis (expensive operations)
+const analysisLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20, // Stricter limit — scans are resource-intensive
+  message: 'Too many analysis requests. Please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api', analysisRoutes);
+app.use('/api', analysisLimiter, analysisRoutes);
 
 // Health Check for monitoring
 app.get('/health', (req, res) => {
@@ -52,9 +61,11 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('Connected to PostgreSQL successfully.');
 
-    // In production, you would use migrations. sync({ alter: true }) is for development only.
-    await sequelize.sync();
-    console.log('Models synchronized with database.');
+    // In production, use migrations. sync() is for development only.
+    if (process.env.NODE_ENV !== 'production') {
+      await sequelize.sync();
+      console.log('Models synchronized with database (dev mode).');
+    }
 
     // Start background services
     MonitoringService.start();

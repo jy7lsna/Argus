@@ -11,9 +11,15 @@ const AuthController = {
 
             const result = await AuthService.register({ email, password, name, organization });
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Registration failed:', error.message);
-            res.status(400).json({ error: error.message });
+            const safeMessages = [
+                'User already exists',
+                'Password must be at least 8 characters long',
+                'Password must contain uppercase, lowercase, and a digit'
+            ];
+            const msg = safeMessages.includes(error.message) ? error.message : 'Registration failed';
+            res.status(400).json({ error: msg });
         }
     },
 
@@ -27,9 +33,9 @@ const AuthController = {
 
             const result = await AuthService.login({ email, password });
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Login failed:', error.message);
-            res.status(401).json({ error: error.message });
+            res.status(401).json({ error: 'Invalid credentials' });
         }
     },
 
@@ -50,9 +56,9 @@ const AuthController = {
             }
             const result = await AuthService.login2FA({ tempToken, token });
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('2FA Login failed:', error.message);
-            res.status(401).json({ error: error.message });
+            res.status(401).json({ error: 'Two-Factor Authentication failed' });
         }
     },
 
@@ -61,9 +67,9 @@ const AuthController = {
             const userId = req.user.id;
             const result = await AuthService.generate2FA(userId);
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Generate 2FA failed:', error.message);
-            res.status(400).json({ error: error.message });
+            res.status(400).json({ error: '2FA setup failed' });
         }
     },
 
@@ -76,9 +82,9 @@ const AuthController = {
             }
             const result = await AuthService.verify2FA(userId, token);
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Verify 2FA failed:', error.message);
-            res.status(400).json({ error: error.message });
+            res.status(400).json({ error: 'Invalid verification token' });
         }
     },
 
@@ -89,9 +95,9 @@ const AuthController = {
             if (!name) return res.status(400).json({ error: 'Key name is required' });
             const result = await AuthService.generateApiKey(userId, name);
             res.json(result);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Generate API Key failed:', error.message);
-            res.status(400).json({ error: error.message });
+            res.status(400).json({ error: 'Failed to generate API key' });
         }
     },
 
@@ -100,8 +106,8 @@ const AuthController = {
             const userId = req.user.id;
             const result = await AuthService.listApiKeys(userId);
             res.json(result);
-        } catch (error) {
-            res.status(400).json({ error: error.message });
+        } catch (error: any) {
+            res.status(400).json({ error: 'Failed to list API keys' });
         }
     },
 
@@ -111,8 +117,8 @@ const AuthController = {
             const keyId = req.params.id;
             const result = await AuthService.revokeApiKey(userId, keyId);
             res.json(result);
-        } catch (error) {
-            res.status(400).json({ error: error.message });
+        } catch (error: any) {
+            res.status(400).json({ error: 'Failed to revoke API key' });
         }
     }
 };

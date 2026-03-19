@@ -91,6 +91,23 @@ const startWorker = async () => {
             console.error('[Worker] Error polling jobs:', error);
         }
     }, 5000); // Check every 5 seconds
+
+    // Cleanup old completed/failed jobs every hour (#16 fix)
+    setInterval(async () => {
+        try {
+            const { Op } = await import('sequelize');
+            const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const deleted = await Job.destroy({
+                where: {
+                    status: { [Op.in]: ['completed', 'failed'] },
+                    createdAt: { [Op.lt]: sevenDaysAgo }
+                }
+            });
+            if (deleted > 0) console.log(`[Worker] Cleaned up ${deleted} old jobs.`);
+        } catch (error) {
+            console.error('[Worker] Job cleanup failed:', error);
+        }
+    }, 60 * 60 * 1000); // Every hour
 };
 
 export const scanQueue = {
@@ -104,3 +121,4 @@ export const scanQueue = {
 };
 
 startWorker();
+

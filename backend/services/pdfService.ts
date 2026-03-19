@@ -95,7 +95,7 @@ const PdfService = {
 function getRiskColor(score: number) {
   if (score >= 81) return '#e74c3c'; // Critical
   if (score >= 61) return '#e67e22'; // High
-  if (score >= 41) return '#f1c40f'; // Medium
+  if (score >= 31) return '#f1c40f'; // Medium
   return '#2ecc71'; // Low
 }
 

@@ -1,7 +1,7 @@
 /**
  * Unit tests for RiskEngine
  */
-const RiskEngine = require('../services/riskEngine');
+import RiskEngine from '../services/riskEngine';
 
 function testRiskEngine() {
   console.log('--- Testing RiskEngine ---');

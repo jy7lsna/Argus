@@ -8,6 +8,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare name: string;
     declare organization_id: CreationOptional<number | null>;
     declare two_factor_secret: CreationOptional<string | null>;
+    declare two_factor_pending_secret: CreationOptional<string | null>;
     declare is_two_factor_enabled: CreationOptional<boolean>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -43,6 +44,10 @@ User.init({
         allowNull: true
     },
     two_factor_secret: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    two_factor_pending_secret: {
         type: DataTypes.STRING,
         allowNull: true
     },

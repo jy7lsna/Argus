@@ -24,7 +24,7 @@ const sequelize = new Sequelize(databaseUrl, {
   dialectOptions: (databaseUrl.includes('localhost') || databaseUrl.includes('@db:')) ? {} : {
     ssl: {
       require: true,
-      rejectUnauthorized: false
+      rejectUnauthorized: true // Verify SSL certs in production (MITM protection)
     }
   }
 });

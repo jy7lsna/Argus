@@ -13,7 +13,9 @@ const redisClient = createClient({
     }
 });
 
-redisClient.on('error', () => {}); // Suppress noisy error logs
+redisClient.on('error', (err) => {
+    console.warn('⚠️  Redis error:', err.message || 'unknown error');
+});
 
 // Connect to Redis on initialization
 redisClient.connect().catch(() => {
