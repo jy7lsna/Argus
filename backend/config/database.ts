@@ -24,7 +24,7 @@ const sequelize = new Sequelize(databaseUrl, {
   dialectOptions: (databaseUrl.includes('localhost') || databaseUrl.includes('@db:')) ? {} : {
     ssl: {
       require: true,
-      rejectUnauthorized: true // Verify SSL certs in production (MITM protection)
+      rejectUnauthorized: false // Reverted: Required for Supabase/Render self-signed certs
     }
   }
 });
