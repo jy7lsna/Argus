@@ -114,7 +114,7 @@ const Navbar = () => {
             <div className="flex items-center gap-4">
                 <div className="text-right">
                     <div className="text-sm font-semibold text-white">{user?.name || 'Loading...'}</div>
-                    <div className="text-xs text-text-secondary uppercase">{user?.organization || 'Organization'}</div>
+                    <div className="text-xs text-text-secondary uppercase">{user?.organization?.name || 'Organization'}</div>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-primary font-bold">
                     {initials}
