@@ -12,11 +12,12 @@ export interface SslInfo {
 const SslService = {
     getCertificateInfo: async (hostname: string, port: number = 443): Promise<SslInfo> => {
         return new Promise((resolve) => {
+            const rejectUnauthorized = process.env.SSL_SCAN_REJECT_UNAUTHORIZED !== 'false';
             const options = {
                 host: hostname,
                 port: port,
                 servername: hostname,
-                rejectUnauthorized: false // We want to see invalid certs too
+                rejectUnauthorized
             };
 
             const socket = tls.connect(options, () => {

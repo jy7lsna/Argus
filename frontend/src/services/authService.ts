@@ -9,7 +9,7 @@ export const authService = {
         const { data } = await api.post('/auth/register', userData);
         return data;
     },
-    logout: () => {
-        localStorage.removeItem('authToken');
+    logout: async () => {
+        await api.post('/auth/logout');
     },
 };

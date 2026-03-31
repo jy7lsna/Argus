@@ -1,4 +1,5 @@
 import { Analysis, Asset, RiskHistory, User } from '../models';
+import sequelize from '../config/database';
 import ScannerService from './scannerService';
 
 const AnalysisService = {
@@ -14,42 +15,45 @@ const AnalysisService = {
         // Run analysis via scanner service
         const analysisResult = await ScannerService.analyzeDomain(domain);
 
-        // Save analysis to DB
-        const analysis = await Analysis.create({
-            domain: analysisResult.domain,
-            overallRiskScore: analysisResult.overallRiskScore,
-            overallRiskLevel: analysisResult.overallRiskLevel,
-            totalAssets: analysisResult.totalAssets,
-            criticalAssets: analysisResult.criticalAssets,
-            highRiskAssets: analysisResult.highRiskAssets,
-            mediumRiskAssets: analysisResult.mediumRiskAssets,
-            lowRiskAssets: analysisResult.lowRiskAssets,
-            user_id: user.id,
-            organization_id: user.organization_id,
-            analyzedAt: new Date()
-        });
+        return await sequelize.transaction(async (transaction) => {
+            // Save analysis to DB
+            const analysis = await Analysis.create({
+                domain: analysisResult.domain,
+                overallRiskScore: analysisResult.overallRiskScore,
+                overallRiskLevel: analysisResult.overallRiskLevel,
+                totalAssets: analysisResult.totalAssets,
+                criticalAssets: analysisResult.criticalAssets,
+                highRiskAssets: analysisResult.highRiskAssets,
+                mediumRiskAssets: analysisResult.mediumRiskAssets,
+                lowRiskAssets: analysisResult.lowRiskAssets,
+                user_id: user.id,
+                organization_id: user.organization_id,
+                analyzedAt: new Date()
+            }, { transaction });
 
-        // Save assets
-        if (analysisResult.assets && analysisResult.assets.length > 0) {
-            await Asset.bulkCreate(analysisResult.assets.map(asset => ({
-                ...asset,
-                analysis_id: analysis.id
-            })));
-        }
+            // Save assets
+            if (analysisResult.assets && analysisResult.assets.length > 0) {
+                await Asset.bulkCreate(analysisResult.assets.map(asset => ({
+                    ...asset,
+                    analysis_id: analysis.id
+                })), { transaction });
+            }
 
-        // Save risk history
-        if (analysisResult.riskTrend && analysisResult.riskTrend.length > 0) {
-            // For manual scans, we just record the current point
-            await RiskHistory.create({
-                date: new Date().toISOString().split('T')[0],
-                score: analysisResult.overallRiskScore,
-                analysis_id: analysis.id
+            // Save risk history
+            if (analysisResult.riskTrend && analysisResult.riskTrend.length > 0) {
+                // For manual scans, we just record the current point
+                await RiskHistory.create({
+                    date: new Date().toISOString().split('T')[0],
+                    score: analysisResult.overallRiskScore,
+                    analysis_id: analysis.id
+                }, { transaction });
+            }
+
+            // Fetch the full analysis with assets and history
+            return await Analysis.findByPk(analysis.id, {
+                include: [Asset, RiskHistory],
+                transaction
             });
-        }
-
-        // Fetch the full analysis with assets and history
-        return await Analysis.findByPk(analysis.id, {
-            include: [Asset, RiskHistory]
         });
     },
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import http from 'http';
@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes';
 import analysisRoutes from './routes/analysisRoutes';
 import MonitoringService from './services/monitoringService';
 import { init as initSocket } from './utils/socket';
+import { csrfMiddleware } from './middleware/csrfMiddleware';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,7 +26,9 @@ app.use(cors({
   ].filter(Boolean),
   credentials: true
 }));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(cookieParser());
+app.use(csrfMiddleware);
 
 // Rate Limiting for Auth
 const authLimiter = rateLimit({
@@ -61,9 +64,13 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('Connected to PostgreSQL successfully.');
 
-    // Auto-sync database schema on every startup (required for Render to add new columns)
-    await sequelize.sync({ alter: true });
-    console.log('Models synchronized with database.');
+    const shouldSync = process.env.DB_SYNC === 'true';
+    if (shouldSync) {
+      await sequelize.sync();
+      console.log('Models synchronized with database.');
+    } else {
+      console.log('DB sync skipped. Run migrations to update schema.');
+    }
 
     // Start background services
     MonitoringService.start();

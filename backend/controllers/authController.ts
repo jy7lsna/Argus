@@ -1,4 +1,5 @@
 import AuthService from '../services/authService';
+import { clearAuthCookie, setAuthCookie } from '../utils/authCookies';
 
 const AuthController = {
     register: async (req: any, res: any) => {
@@ -10,6 +11,7 @@ const AuthController = {
             }
 
             const result = await AuthService.register({ email, password, name, organization });
+            setAuthCookie(res, result.token);
             res.json(result);
         } catch (error: any) {
             console.error('Registration failed:', error.message);
@@ -32,6 +34,9 @@ const AuthController = {
             }
 
             const result = await AuthService.login({ email, password });
+            if (result.token) {
+                setAuthCookie(res, result.token);
+            }
             res.json(result);
         } catch (error: any) {
             console.error('Login failed:', error.message);
@@ -55,11 +60,17 @@ const AuthController = {
                 return res.status(400).json({ error: 'tempToken and token are required' });
             }
             const result = await AuthService.login2FA({ tempToken, token });
+            setAuthCookie(res, result.token);
             res.json(result);
         } catch (error: any) {
             console.error('2FA Login failed:', error.message);
             res.status(401).json({ error: 'Two-Factor Authentication failed' });
         }
+    },
+
+    logout: async (req: any, res: any) => {
+        clearAuthCookie(res);
+        res.json({ success: true });
     },
 
     generate2FA: async (req: any, res: any) => {

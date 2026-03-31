@@ -3,6 +3,7 @@ import DeltaCalculator from '../utils/deltaCalculator';
 import nodemailer from 'nodemailer';
 import { Analysis, Asset, RiskHistory, Job } from '../models';
 import { getIO } from '../utils/socket';
+import sequelize from '../config/database';
 
 /**
  * REDIS-FREE JOB QUEUE
@@ -39,7 +40,9 @@ const processJob = async (job: Job) => {
     console.log(`[Worker] Processing job ${job.id} for ${domain}`);
 
     try {
-        await job.update({ status: 'processing' });
+        if (job.status !== 'processing') {
+            await job.update({ status: 'processing' });
+        }
         try { getIO().emit(`scan:started:${user_id}`, { domain }); } catch {}
 
         const previousAnalysis = await Analysis.findOne({
@@ -48,16 +51,20 @@ const processJob = async (job: Job) => {
 
         const result = await ScannerService.analyzeDomain(domain);
 
-        const newAnalysis = await Analysis.create({
-            domain: result.domain, overallRiskScore: result.overallRiskScore,
-            overallRiskLevel: result.overallRiskLevel, totalAssets: result.totalAssets,
-            criticalAssets: result.criticalAssets, highRiskAssets: result.highRiskAssets,
-            mediumRiskAssets: result.mediumRiskAssets, lowRiskAssets: result.lowRiskAssets,
-            user_id, organization_id, analyzedAt: new Date()
-        });
+        const newAnalysis = await sequelize.transaction(async (transaction) => {
+            const analysis = await Analysis.create({
+                domain: result.domain, overallRiskScore: result.overallRiskScore,
+                overallRiskLevel: result.overallRiskLevel, totalAssets: result.totalAssets,
+                criticalAssets: result.criticalAssets, highRiskAssets: result.highRiskAssets,
+                mediumRiskAssets: result.mediumRiskAssets, lowRiskAssets: result.lowRiskAssets,
+                user_id, organization_id, analyzedAt: new Date()
+            }, { transaction });
 
-        await Asset.bulkCreate(result.assets.map((a: any) => ({ ...a, analysis_id: newAnalysis.id })));
-        await RiskHistory.create({ date: new Date().toISOString().split('T')[0], score: result.overallRiskScore, analysis_id: newAnalysis.id });
+            await Asset.bulkCreate(result.assets.map((a: any) => ({ ...a, analysis_id: analysis.id })), { transaction });
+            await RiskHistory.create({ date: new Date().toISOString().split('T')[0], score: result.overallRiskScore, analysis_id: analysis.id }, { transaction });
+
+            return analysis;
+        });
 
         const delta = DeltaCalculator.calculateDelta(result, previousAnalysis);
         if (delta.isAlertRequired && isEmailConfigured) await sendAlert({ email }, domain, delta);
@@ -79,9 +86,19 @@ const startWorker = async () => {
     // Continuous polling
     setInterval(async () => {
         try {
-            const nextJob = await Job.findOne({
-                where: { status: 'pending' },
-                order: [['createdAt', 'ASC']]
+            const nextJob = await sequelize.transaction(async (transaction) => {
+                const job = await Job.findOne({
+                    where: { status: 'pending' },
+                    order: [['createdAt', 'ASC']],
+                    lock: transaction.LOCK.UPDATE,
+                    skipLocked: true,
+                    transaction
+                });
+
+                if (!job) return null;
+
+                await job.update({ status: 'processing' }, { transaction });
+                return job;
             });
 
             if (nextJob) {

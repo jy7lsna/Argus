@@ -1,6 +1,6 @@
 # 🦉 Argus Production Deployment Guide
 
-Follow these steps to move Argus from your local machine to a professional cloud environment.
+Follow these steps to deploy Argus with the current backend and frontend setup.
 
 ## 1. 📂 Code Preparation
 Ensure your latest changes are pushed to a **GitHub Repository**.
@@ -12,7 +12,7 @@ Supabase provides a managed PostgreSQL database that is perfect for Argus.
 1. Create a project at [supabase.com](https://supabase.com).
 2. Go to **Project Settings** -> **Database**.
 3. Copy the **Connection String** (URI format). 
-   - *Example*: `postgres://postgres:[PASSWORD]@[HOST]:6432/postgres`
+   - *Example*: `postgres://postgres:[PASSWORD]@[HOST]:6543/postgres`
 4. **Important**: Save this for the `DATABASE_URL` environment variable.
 
 ## 3. ⚙️ Backend Deployment (Render)
@@ -25,6 +25,8 @@ Render will host your Node.js API and your internal Background Workers.
    - `DATABASE_URL`: (Your Supabase URI)
    - `JWT_SECRET`: (A long random string)
    - `FRONTEND_URL`: (Your Vercel/Render frontend URL)
+   - `DB_SSL_REJECT_UNAUTHORIZED`: (Optional, set to `false` only if required)
+   - `SSL_SCAN_REJECT_UNAUTHORIZED`: (Optional, set to `false` to allow invalid certs in scan)
 
 ## 4. 🎨 Frontend Deployment (Vercel or Render)
 1. **Option A (Vercel)**: Connect your repo, select the `frontend` root, and deploy.
@@ -36,6 +38,10 @@ Render will host your Node.js API and your internal Background Workers.
 1. Access your frontend URL.
 2. Log in and trigger a scan.
 3. Check the **Health Check** at `https://your-backend.onrender.com/health`.
+
+## 6. ✅ Notes on TLS
+- Database connections verify TLS certificates by default. Only set `DB_SSL_REJECT_UNAUTHORIZED=false` if you must connect to a host with an invalid cert.
+- The SSL scanner verifies certificates by default. Only set `SSL_SCAN_REJECT_UNAUTHORIZED=false` if you want to allow invalid certs during scans.
 
 ---
 **Need help with a specific step? Just ask!** 🚀🦉

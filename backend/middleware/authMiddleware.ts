@@ -49,7 +49,9 @@ const authMiddleware = async (req: any, res: any, next: any) => {
 
         // 2. Fallback check for JWT Token
         const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const headerToken = authHeader && authHeader.split(' ')[1];
+        const cookieToken = req.cookies?.auth_token;
+        const token = cookieToken || headerToken;
 
         if (!token) {
             return res.status(401).json({ error: 'Access token or API key required' });

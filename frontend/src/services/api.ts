@@ -5,15 +5,19 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
+const getCookieValue = (name: string) => {
+    const match = document.cookie.match(new RegExp(`(^|; )${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[2]) : null;
+};
+
 api.interceptors.request.use((config) => {
-    // SECURITY NOTE: localStorage is vulnerable to XSS attacks. If an XSS 
-    // vulnerability exists, attackers can steal this token. Consider migrating
-    // to httpOnly cookies with SameSite=Strict for enhanced security.
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    const csrfToken = getCookieValue('XSRF-TOKEN');
+    if (csrfToken) {
+        config.headers = config.headers || {};
+        config.headers['X-CSRF-Token'] = csrfToken;
     }
     return config;
 });
@@ -22,8 +26,6 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('authUser');
             window.location.href = '/login';
         }
         return Promise.reject(error);

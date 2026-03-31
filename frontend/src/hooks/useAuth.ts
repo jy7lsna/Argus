@@ -1,35 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import type { User } from '../types';
+import api from '../services/api';
 
 export function useAuth() {
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-    const token = localStorage.getItem('authToken');
-
     const { data: user, isLoading } = useQuery<User>({
         queryKey: ['me'],
         queryFn: async () => {
-            if (!token) throw new Error('No token');
-            const { data } = await axios.get(`${apiBase}/auth/me`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const { data } = await api.get('/auth/me');
             return data;
         },
-        enabled: !!token,
         retry: false,
         staleTime: 5 * 60 * 1000, // 5 minutes — avoid refetching on every mount
     });
 
     const logout = () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authUser');
+        api.post('/auth/logout').catch(() => undefined);
         window.location.href = '/login';
     };
 
     return {
-        user: user || (localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')!) : null),
-        loading: !!token && isLoading,
-        isAuthenticated: !!token && (!isLoading || !!user),
+        user: user || null,
+        loading: isLoading,
+        isAuthenticated: !!user,
         logout
     };
 }

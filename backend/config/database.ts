@@ -8,6 +8,8 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
+const dbSslRejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
+
 const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: false, // Set to console.log to see SQL queries during development
@@ -24,7 +26,7 @@ const sequelize = new Sequelize(databaseUrl, {
   dialectOptions: (databaseUrl.includes('localhost') || databaseUrl.includes('@db:')) ? {} : {
     ssl: {
       require: true,
-      rejectUnauthorized: false // Reverted: Required for Supabase/Render self-signed certs
+      rejectUnauthorized: dbSslRejectUnauthorized
     }
   }
 });
