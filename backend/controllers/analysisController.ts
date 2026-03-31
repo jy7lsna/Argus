@@ -4,15 +4,18 @@ import redisClient from '../utils/cache';
 
 /** Safe Redis helpers — silently fall back if Redis is unavailable */
 const safeRedisGet = async (key: string): Promise<string | null> => {
+  if (!redisClient) return null;
   try {
     const val = await redisClient.get(key);
     return val ? val.toString() : null;
   } catch { return null; }
 };
 const safeRedisSet = async (key: string, ttl: number, value: string): Promise<void> => {
+  if (!redisClient) return;
   try { await redisClient.setEx(key, ttl, value); } catch { /* cache miss is acceptable */ }
 };
 const safeRedisDel = async (key: string): Promise<void> => {
+  if (!redisClient) return;
   try { await redisClient.del(key); } catch { /* cache miss is acceptable */ }
 };
 
