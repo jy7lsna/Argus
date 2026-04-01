@@ -40,7 +40,10 @@ export const AuthPage = ({ type }: { type: 'login' | 'register' }) => {
             setLoading(true);
             setError(null);
             try {
-                await api.post('/auth/login/2fa', { tempToken, token: twoFactorCode });
+                const response = await api.post('/auth/login/2fa', { tempToken, token: twoFactorCode });
+                if (response.data?.token) {
+                    localStorage.setItem('auth_token', response.data.token);
+                }
                 navigate('/dashboard');
             } catch (err: any) {
                 setError(err.response?.data?.error || 'Invalid 2FA code.');
@@ -77,6 +80,10 @@ export const AuthPage = ({ type }: { type: 'login' | 'register' }) => {
                 setRequires2FA(true);
                 setTempToken(response.data.tempToken);
                 return;
+            }
+
+            if (response.data?.token) {
+                localStorage.setItem('auth_token', response.data.token);
             }
 
             navigate('/dashboard');

@@ -15,6 +15,7 @@ export function useAuth() {
 
     const logout = () => {
         api.post('/auth/logout').catch(() => undefined);
+        localStorage.removeItem('auth_token');
         window.location.href = '/login';
     };
 
