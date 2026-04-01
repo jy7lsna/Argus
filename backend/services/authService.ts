@@ -16,8 +16,9 @@ const AuthService = {
      * Register a new user and organization
      */
     register: async ({ email, password, name, organization }: any) => {
+        const normalizedEmail = (email || '').trim().toLowerCase();
         // Check if user exists
-        const existingUser = await User.findOne({ where: { email } });
+        const existingUser = await User.findOne({ where: { email: normalizedEmail } });
         if (existingUser) {
             throw new Error('User already exists');
         }
@@ -40,7 +41,7 @@ const AuthService = {
 
         // Create user
         const user = await User.create({
-            email,
+            email: normalizedEmail,
             password: hashedPassword,
             name,
             organization_id: org.id
@@ -64,8 +65,9 @@ const AuthService = {
      * Authenticate a user and return a token
      */
     login: async ({ email, password }: any) => {
+        const normalizedEmail = (email || '').trim().toLowerCase();
         const user = await User.findOne({
-            where: { email },
+            where: { email: normalizedEmail },
             include: [Organization]
         });
 

@@ -355,8 +355,9 @@ const Home = () => {
                 </div>
             </motion.nav>
 
-            {/* ─── Hero Section ─── */}
-            <section ref={heroRef} className="relative pt-36 pb-20 px-6 flex flex-col items-center text-center z-10">
+            <main id="main-content">
+                {/* ─── Hero Section ─── */}
+                <section ref={heroRef} className="relative pt-36 pb-20 px-6 flex flex-col items-center text-center z-10">
                 {/* Hero grid background */}
                 <div className="absolute inset-0 pointer-events-none z-0">
                     <div
@@ -502,7 +503,7 @@ const Home = () => {
                                     <div className={`w-12 h-12 rounded-xl bg-${feature.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-${feature.color}/15 transition-all duration-300`}>
                                         <feature.icon size={24} className={`text-${feature.color}`} />
                                     </div>
-                                    <h4 className="text-lg font-semibold mb-3 group-hover:text-white transition-colors">{feature.title}</h4>
+                                    <h3 className="text-lg font-semibold mb-3 group-hover:text-white transition-colors">{feature.title}</h3>
                                     <p className="text-sm text-white/30 leading-relaxed group-hover:text-white/50 transition-colors">{feature.desc}</p>
                                 </TiltCard>
                             </motion.div>
@@ -616,7 +617,7 @@ const Home = () => {
                                         <div className={`w-14 h-14 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform duration-500 group-hover:border-${card.color}/20 group-hover:bg-${card.color}/5`}>
                                             <card.icon size={26} className={`text-white/50 group-hover:text-${card.color} transition-colors duration-500`} />
                                         </div>
-                                        <h4 className="text-xl font-semibold mb-3 tracking-tight relative z-10">{card.title}</h4>
+                                        <h3 className="text-xl font-semibold mb-3 tracking-tight relative z-10">{card.title}</h3>
                                         <p className="text-sm text-white/35 leading-relaxed relative z-10 group-hover:text-white/50 transition-colors duration-500">{card.desc}</p>
                                     </div>
                                 ))}
@@ -689,7 +690,7 @@ const Home = () => {
                         {/* Starter */}
                         <motion.div variants={fadeUp}>
                             <TiltCard className="glass p-8 rounded-2xl flex flex-col h-full hover:border-white/10 transition-all duration-500" intensity={5}>
-                                <h4 className="text-lg font-semibold mb-2">Starter</h4>
+                                <h3 className="text-lg font-semibold mb-2">Starter</h3>
                                 <p className="text-sm text-white/30 mb-6">Perfect for side projects and personal use.</p>
                                 <div className="text-4xl font-display font-bold mb-1">$0</div>
                                 <span className="text-xs text-white/35 mb-8">forever free</span>
@@ -712,7 +713,7 @@ const Home = () => {
                                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow-lg shadow-primary/25">
                                     Most Popular
                                 </div>
-                                <h4 className="text-lg font-semibold mb-2">Pro</h4>
+                                <h3 className="text-lg font-semibold mb-2">Pro</h3>
                                 <p className="text-sm text-white/30 mb-6">For growing teams that need more power.</p>
                                 <div className="text-4xl font-display font-bold mb-1">$49</div>
                                 <span className="text-xs text-white/25 mb-8">per month</span>
@@ -732,7 +733,7 @@ const Home = () => {
                         {/* Enterprise */}
                         <motion.div variants={fadeUp} custom={2}>
                             <TiltCard className="glass p-8 rounded-2xl flex flex-col h-full hover:border-white/10 transition-all duration-500" intensity={5}>
-                                <h4 className="text-lg font-semibold mb-2">Enterprise</h4>
+                                <h3 className="text-lg font-semibold mb-2">Enterprise</h3>
                                 <p className="text-sm text-white/30 mb-6">For organizations with advanced needs.</p>
                                 <div className="text-4xl font-display font-bold mb-1">Custom</div>
                                 <span className="text-xs text-white/25 mb-8">contact sales</span>
@@ -798,6 +799,8 @@ const Home = () => {
                 </div>
             </section>
 
+            </main>
+
             {/* ─── Footer ─── */}
             <footer className="relative py-16 px-6 z-10 border-t border-white/5">
                 <div className="max-w-7xl mx-auto">
@@ -814,31 +817,31 @@ const Home = () => {
                             </p>
                         </div>
                         <div>
-                            <h5 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-4">Platform</h5>
-                            <ul className="space-y-3">
-                                {['Features', 'Pricing', 'API Docs', 'Changelog'].map(link => (
-                                    <li key={link}><a href={`#${link.toLowerCase()}`} className="text-sm text-white/30 hover:text-white transition-colors">{link}</a></li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div>
-                            <h5 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-4">Company</h5>
-                            <ul className="space-y-3">
-                                {['About', 'Blog', 'Careers', 'Contact'].map(link => (
-                                    <li key={link}><a href={`#${link.toLowerCase()}`} className="text-sm text-white/30 hover:text-white transition-colors">{link}</a></li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-xs text-white/25">© 2025 Argus Systems Inc. All rights reserved.</p>
-                        <div className="flex gap-6">
-                            {['Privacy Policy', 'Terms of Service', 'Security'].map(link => (
-                                <a key={link} href="#" className="text-xs text-white/25 hover:text-white/50 transition-colors">{link}</a>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-4">Platform</h4>
+                        <ul className="space-y-3">
+                            {['Features', 'Pricing', 'API Docs', 'Changelog'].map(link => (
+                                <li key={link}><a href={`#${link.toLowerCase()}`} className="text-sm text-white/30 hover:text-white transition-colors">{link}</a></li>
                             ))}
-                        </div>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-4">Company</h4>
+                        <ul className="space-y-3">
+                            {['About', 'Blog', 'Careers', 'Contact'].map(link => (
+                                <li key={link}><a href={`#${link.toLowerCase()}`} className="text-sm text-white/30 hover:text-white transition-colors">{link}</a></li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-xs text-white/25">© 2025 Argus Systems Inc. All rights reserved.</p>
+                    <div className="flex gap-6">
+                        {['Privacy Policy', 'Terms of Service', 'Security'].map(link => (
+                            <a key={link} href="#" className="text-xs text-white/25 hover:text-white/50 transition-colors">{link}</a>
+                        ))}
+                    </div>
+                </div>
+            </div>
             </footer>
         </div>
     );

@@ -95,7 +95,7 @@ export const AuthPage = ({ type }: { type: 'login' | 'register' }) => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-6 relative overflow-hidden font-sans">
+        <main className="min-h-screen bg-black flex items-center justify-center p-6 relative overflow-hidden font-sans">
             {/* Background Glows - Matching Home Page Style */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/10 blur-[120px] animate-pulse-custom" />
@@ -111,6 +111,7 @@ export const AuthPage = ({ type }: { type: 'login' | 'register' }) => {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-[480px] relative z-10"
             >
+                <h1 className="sr-only">Argus authentication</h1>
                 <div className="glass p-10 md:p-12 rounded-[40px] border-white/10 shadow-2xl relative overflow-hidden">
                     {/* Top Accent Line */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
@@ -265,6 +266,6 @@ export const AuthPage = ({ type }: { type: 'login' | 'register' }) => {
                     )}
                 </div>
             </motion.div>
-        </div>
+        </main>
     );
 };

@@ -96,11 +96,11 @@ const Reports = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 shrink-0">
+                                <div className="flex items-center gap-2 shrink-0 flex-wrap w-full md:w-auto">
                                     <button
                                         onClick={() => handleExportJson(analysis.id, analysis.domain)}
                                         disabled={exportingId === analysis.id + '-json'}
-                                        className="flex items-center gap-2 glass px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/5 transition-all text-white/70 disabled:opacity-50"
+                                        className="flex items-center gap-2 glass px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/5 transition-all text-white/70 disabled:opacity-50 w-full sm:w-auto justify-center"
                                     >
                                         {exportingId === analysis.id + '-json' ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
                                         JSON
@@ -108,14 +108,14 @@ const Reports = () => {
                                     <button
                                         onClick={() => handleExportPdf(analysis.id, analysis.domain)}
                                         disabled={exportingId === analysis.id + '-pdf'}
-                                        className="flex items-center gap-2 bg-primary/20 text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-primary/30 transition-all disabled:opacity-50"
+                                        className="flex items-center gap-2 bg-primary/20 text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-primary/30 transition-all disabled:opacity-50 w-full sm:w-auto justify-center"
                                     >
                                         {exportingId === analysis.id + '-pdf' ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
                                         PDF
                                     </button>
                                     <Link
                                         to={`/analysis/${analysis.id}`}
-                                        className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all"
+                                        className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all w-full sm:w-auto justify-center"
                                     >
                                         View <ArrowRight size={12} />
                                     </Link>

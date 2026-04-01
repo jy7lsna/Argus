@@ -3,7 +3,7 @@ import { User, Shield, Bell, Globe, Key, X, Terminal, Plus, Trash2, Copy, Check 
 import api from '../services/api';
 
 const SettingsItem = ({ icon: Icon, title, description, onClick }: any) => (
-    <div onClick={onClick} className="flex items-center justify-between p-6 glass rounded-2xl hover:border-primary/30 transition-all cursor-pointer group">
+    <div onClick={onClick} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 glass rounded-2xl hover:border-primary/30 transition-all cursor-pointer group">
         <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white/5 group-hover:bg-primary/10 rounded-xl flex items-center justify-center transition-colors">
                 <Icon size={22} className="text-text-secondary group-hover:text-primary" />
@@ -13,7 +13,7 @@ const SettingsItem = ({ icon: Icon, title, description, onClick }: any) => (
                 <p className="text-sm text-text-secondary">{description}</p>
             </div>
         </div>
-        <button className="text-sm font-bold text-primary hover:underline">Edit</button>
+        <button className="text-sm font-bold text-primary hover:underline self-start sm:self-auto">Edit</button>
     </div>
 );
 
@@ -163,7 +163,8 @@ const Settings = () => {
                         {apiKeys.length === 0 ? (
                             <div className="p-8 text-center text-text-secondary text-sm">No API keys generated yet.</div>
                         ) : (
-                            <table className="w-full text-left text-sm text-text-secondary">
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[640px] text-left text-sm text-text-secondary">
                                 <thead className="bg-white/5 text-xs uppercase font-bold tracking-widest">
                                     <tr>
                                         <th className="px-6 py-4">Name</th>
@@ -186,7 +187,8 @@ const Settings = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
                         )}
                     </div>
                 </section>

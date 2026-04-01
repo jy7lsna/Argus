@@ -125,8 +125,8 @@ const Dashboard = () => {
                 <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-secondary/5 blur-[100px] rounded-full" />
             </div>
 
-            <div className="relative z-10 space-y-8 max-w-7xl mx-auto animate-pulse p-8">
-                <header className="flex justify-between items-end mb-8">
+            <div className="relative z-10 space-y-8 max-w-7xl mx-auto animate-pulse p-4 md:p-8">
+                <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4 mb-8">
                     <div>
                         <div className="h-10 w-64 bg-white/10 rounded-lg mb-4" />
                         <div className="h-4 w-48 bg-white/5 rounded-md" />
@@ -179,7 +179,7 @@ const Dashboard = () => {
                 <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-secondary/5 blur-[100px] rounded-full" />
             </div>
 
-            <div className="relative z-10 space-y-8 max-w-7xl mx-auto p-8">
+            <div className="relative z-10 space-y-8 max-w-7xl mx-auto p-4 md:p-8">
                 {/* Error Banner */}
                 {errorBanner && (
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-risk-critical/10 border border-risk-critical/20 text-risk-critical text-sm font-bold">
@@ -191,21 +191,21 @@ const Dashboard = () => {
                     </div>
                 )}
 
-                <header className="flex justify-between items-end">
+                <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4">
                     <div>
                         <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">Portfolio Overview</h1>
                         <p className="text-text-secondary">Continuous risk monitoring for <strong>{latestAnalysis?.domain || 'primary domain'}</strong></p>
                     </div>
                     {showAnalyzeInput ? (
-                        <form onSubmit={handleNewAnalysis} className="flex items-center gap-2">
-                            <div className="flex items-center gap-2 glass px-4 py-2 rounded-xl border border-white/10 focus-within:border-primary/30 transition-all">
+                        <form onSubmit={handleNewAnalysis} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+                            <div className="flex items-center gap-2 glass px-4 py-2 rounded-xl border border-white/10 focus-within:border-primary/30 transition-all w-full sm:w-auto">
                                 <Globe size={16} className="text-white/30" />
                                 <input
                                     type="text"
                                     value={domain}
                                     onChange={(e) => setDomain(e.target.value)}
                                     placeholder="e.g. google.com"
-                                    className="bg-transparent border-none outline-none text-sm text-white placeholder:text-white/20 w-48"
+                                    className="bg-transparent border-none outline-none text-sm text-white placeholder:text-white/20 w-full sm:w-48"
                                     autoFocus
                                     disabled={mutation.isPending}
                                 />
@@ -213,7 +213,7 @@ const Dashboard = () => {
                             <button
                                 type="submit"
                                 disabled={mutation.isPending || !domain.trim()}
-                                className="bg-primary hover:bg-primary/90 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                className="bg-primary hover:bg-primary/90 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full sm:w-auto"
                             >
                                 {mutation.isPending ? (
                                     <><Loader2 size={14} className="animate-spin" /> Analyzing...</>
@@ -224,7 +224,7 @@ const Dashboard = () => {
                             <button
                                 type="button"
                                 onClick={() => { setShowAnalyzeInput(false); setDomain(''); setErrorBanner(null); }}
-                                className="p-2.5 rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all"
+                                className="p-2.5 rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all w-full sm:w-auto"
                             >
                                 <X size={16} />
                             </button>
@@ -232,7 +232,7 @@ const Dashboard = () => {
                     ) : (
                         <button
                             onClick={() => setShowAnalyzeInput(true)}
-                            className="bg-primary hover:bg-primary/90 px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+                            className="bg-primary hover:bg-primary/90 px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 w-full sm:w-auto"
                         >
                             New Analysis
                         </button>

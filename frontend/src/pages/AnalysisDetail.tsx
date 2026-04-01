@@ -121,17 +121,17 @@ const AnalysisDetail = () => {
 
     return (
         <div className="space-y-12">
-            <div className="max-w-7xl mx-auto space-y-12">
-                <div className="flex items-center justify-between">
+            <div className="max-w-7xl mx-auto space-y-12 px-4 md:px-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <Link to="/dashboard" className="flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                         Back to Dashboard
                     </Link>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         <button
                             onClick={handleExportJson}
                             disabled={exportingJson}
-                            className="flex items-center gap-2 glass px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-white/5 transition-all text-white/80 disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 glass px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-white/5 transition-all text-white/80 disabled:opacity-50 w-full sm:w-auto"
                         >
                             {exportingJson ? <Loader2 size={16} className="animate-spin" /> : <Download size={18} />}
                             JSON
@@ -139,7 +139,7 @@ const AnalysisDetail = () => {
                         <button
                             onClick={handleExportPdf}
                             disabled={exportingPdf}
-                            className="flex items-center gap-2 bg-primary px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 bg-primary px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all disabled:opacity-50 w-full sm:w-auto"
                         >
                             {exportingPdf ? <Loader2 size={16} className="animate-spin" /> : <FileText size={18} />}
                             Export Report
@@ -148,7 +148,7 @@ const AnalysisDetail = () => {
                 </div>
 
                 <header className="space-y-4">
-                    <div className="flex items-center gap-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <h1 className="text-4xl md:text-6xl font-display font-medium tracking-tight">
                             {analysis.domain || 'Unknown Domain'}
                         </h1>
