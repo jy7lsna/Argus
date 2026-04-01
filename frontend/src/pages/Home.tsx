@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     ShieldAlert, ShieldCheck, Check,
     Cpu, Radar, Sparkles, Globe, ArrowRight,
@@ -283,6 +283,8 @@ const HeroFloatingElements = () => (
    ═══════════════════════════════════════════════ */
 const Home = () => {
     const [scrolled, setScrolled] = useState(false);
+    const [domain, setDomain] = useState('');
+    const navigate = useNavigate();
     const heroRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
     const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
@@ -293,6 +295,15 @@ const Home = () => {
         window.addEventListener('scroll', handler, { passive: true });
         return () => window.removeEventListener('scroll', handler);
     }, []);
+
+    const handleAnalyze = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!domain.trim()) return;
+        const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        localStorage.setItem('pending_domain', cleanDomain);
+        const token = localStorage.getItem('auth_token');
+        navigate(token ? '/dashboard' : '/login');
+    };
 
     const features = [
         { icon: Radar, title: 'Asset Discovery', desc: 'Automatically map every subdomain, IP, and exposed service across your organization.', color: 'primary' },
@@ -411,11 +422,12 @@ const Home = () => {
                     </motion.p>
 
                     {/* Search Bar */}
-                    <motion.div
+                    <motion.form
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 1, ease: [0.25, 0.4, 0.25, 1] }}
                         className="w-full max-w-2xl px-4 mx-auto mt-5"
+                        onSubmit={handleAnalyze}
                     >
                         <div className="glass p-1.5 rounded-2xl group focus-within:border-primary/20 transition-all duration-500 shadow-2xl relative overflow-hidden">
                             <div className="flex items-center gap-1">
@@ -424,10 +436,12 @@ const Home = () => {
                                     <input
                                         type="text"
                                         placeholder="Enter your enterprise domain (e.g. google.com)"
+                                        value={domain}
+                                        onChange={(event) => setDomain(event.target.value)}
                                         className="w-full bg-transparent border-none focus:outline-none py-4 pl-14 text-white placeholder:text-white/20 font-medium text-sm"
                                     />
                                 </div>
-                                <button className="btn-primary py-3.5 px-8 rounded-xl text-sm flex items-center justify-center gap-2 whitespace-nowrap mr-1">
+                                <button type="submit" className="btn-primary py-3.5 px-8 rounded-xl text-sm flex items-center justify-center gap-2 whitespace-nowrap mr-1">
                                     Analyze Domain
                                     <ArrowRight size={16} />
                                 </button>
@@ -451,7 +465,7 @@ const Home = () => {
                                 </motion.span>
                             ))}
                         </motion.div>
-                    </motion.div>
+                    </motion.form>
                 </motion.div>
 
                 {/* Dashboard Preview */}

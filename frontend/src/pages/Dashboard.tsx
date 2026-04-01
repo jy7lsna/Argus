@@ -96,6 +96,14 @@ const Dashboard = () => {
         }
     });
 
+    useEffect(() => {
+        const pendingDomain = localStorage.getItem('pending_domain');
+        if (!pendingDomain) return;
+        localStorage.removeItem('pending_domain');
+        const cleanDomain = pendingDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        mutation.mutate(cleanDomain);
+    }, [mutation]);
+
     const handleNewAnalysis = (e: React.FormEvent) => {
         e.preventDefault();
         if (!domain.trim()) return;
