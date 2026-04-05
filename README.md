@@ -18,6 +18,7 @@ Argus is a full-stack platform that discovers external assets, analyzes risk, an
 - Auth: JWT, bcrypt, speakeasy (2FA)
 - Reports: PDFKit
 - Email: Nodemailer (optional)
+- Cache: Redis (optional)
 
 ## Project Structure
 
@@ -80,6 +81,10 @@ The Vite dev server defaults to `http://localhost:5173`.
 - `FRONTEND_URL` (used for CORS and Socket.IO)
 - `DB_SSL_REJECT_UNAUTHORIZED` (optional, set to `false` to disable strict TLS)
 - `SSL_SCAN_REJECT_UNAUTHORIZED` (optional, set to `false` to allow invalid certs in scan)
+- `REDIS_URL` (optional, e.g. `redis://localhost:6379`)
+- `REDIS_HOST` and `REDIS_PORT` (optional alternative to `REDIS_URL`)
+- `COOKIE_SAMESITE` (optional: `lax`, `strict`, or `none`)
+- `NODE_ENV` (set to `production` to enable secure cookies)
 
 ### Frontend (frontend/.env)
 
@@ -108,6 +113,12 @@ The Vite dev server defaults to `http://localhost:5173`.
 - `GET /api/analyses/:id/export/pdf`
 
 All analysis endpoints require a Bearer token in the Authorization header.
+
+### Security Behavior
+
+- Cookie-authenticated requests use CSRF protection. The server issues an `XSRF-TOKEN` cookie and expects an `x-csrf-token` header for non-GET requests.
+- API key requests (`x-api-key`) skip CSRF checks.
+- Bearer-token requests without auth cookies are not subject to CSRF checks.
 
 ## Deployment
 
